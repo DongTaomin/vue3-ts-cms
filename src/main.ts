@@ -1,5 +1,28 @@
 import { createApp } from "vue";
+import ElementPlus from "element-plus";
+import * as ElementPlusIconsVue from "@element-plus/icons-vue";
+
+import "element-plus/dist/index.css";
+
+import "./assets/css/index.css";
+
+// import "./service/axios_demo";
+// import dtmRequest from "./service";
+
 import App from "./App.vue";
 
-createApp(App).mount("#app");
-console.log("hello1 world");
+import router from "./router";
+import store from "./store";
+import { setupStore } from "./store/index";
+
+const app = createApp(App);
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component);
+}
+
+app.use(router);
+app.use(store);
+app.use(ElementPlus);
+setupStore();
+
+app.mount("#app");
