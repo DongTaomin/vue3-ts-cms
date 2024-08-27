@@ -10,6 +10,8 @@ import { ILoginState, IDataType, ILoginResult } from "./types";
 import { IRootState } from "../types";
 import localCache from "../../utils/cache";
 import router from "@/router";
+import { mapMenusToRouters } from "@/utils/map-menus";
+import { mapMenusToPermissions } from "@/utils/map-menus";
 
 const loginModule: Module<ILoginState, IRootState> = {
   namespaced: true,
@@ -21,6 +23,8 @@ const loginModule: Module<ILoginState, IRootState> = {
       useInfo: {},
 
       userMenus: [],
+
+      permissions: [],
     };
   },
   mutations: {
@@ -36,6 +40,21 @@ const loginModule: Module<ILoginState, IRootState> = {
 
     setUserMenus(state, userMenus) {
       state.userMenus = userMenus;
+
+      // userMenus => routes
+      const routes = mapMenusToRouters(userMenus);
+      // console.log(" routes：", routes);
+
+      // routes => router.main.children
+      routes.forEach((route) => {
+        router.addRoute("main", route);
+      });
+
+      // 获取用户按钮权限
+      const permissions = mapMenusToPermissions(userMenus);
+      // console.log("按钮权限", permissions);
+
+      state.permissions = permissions;
     },
   },
   actions: {
@@ -68,6 +87,7 @@ const loginModule: Module<ILoginState, IRootState> = {
       router.push("/main");
     },
 
+    // 加载本地缓存
     loadLocalLogin({ commit }) {
       const token = localCache.getCache("token");
       if (token) {

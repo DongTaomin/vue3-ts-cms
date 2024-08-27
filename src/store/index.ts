@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 
 import { IRootState } from "./types";
 import login from "./login/login";
+import system from "./mian/system/system";
 
 const store = createStore<IRootState>({
   state() {
@@ -17,6 +18,7 @@ const store = createStore<IRootState>({
   getters: {},
   modules: {
     login,
+    system,
   },
 });
 

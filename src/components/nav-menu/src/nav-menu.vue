@@ -6,7 +6,7 @@
     </div>
 
     <el-menu
-      default-active="2"
+      :default-active="defaultValue"
       class="el-menu-vertical"
       :collapse="collapse"
       background-color="#0c2135"
@@ -28,7 +28,10 @@
 
             <!-- 二级菜单  -->
             <template v-for="subitem in item.children" :key="subitem.id">
-              <el-menu-item :index="subitem.id + ''">
+              <el-menu-item
+                :index="subitem.id + ''"
+                @click="handleMenuClick(subitem)"
+              >
                 <i v-if="subitem.icon" :class="subitem.icon"></i>
                 <span> {{ subitem.name }} </span>
               </el-menu-item>
@@ -47,8 +50,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import { useStore } from "vuex";
+
+import { useRouter } from "vue-router";
+import { processingPath } from "@/utils/map-menus";
 
 export default defineComponent({
   props: {
@@ -60,11 +66,28 @@ export default defineComponent({
   setup() {
     // 获取vuex中的userMenus
     const store = useStore();
+    // 获取router
+    const router = useRouter();
     const userMenus = computed(() => {
       return store.state.login.userMenus;
     });
+
+    // 默认激活菜单
+    const currentPath = router.currentRoute.value.path;
+    const menu = processingPath(userMenus.value, currentPath);
+    const defaultValue = ref(menu.id + "");
+
+    // 事件处理函数
+    const handleMenuClick = (item: any) => {
+      router.push({
+        path: item.url ?? "/not-found",
+      });
+      // console.log(item);
+    };
     return {
       userMenus,
+      defaultValue,
+      handleMenuClick,
     };
   },
 });
