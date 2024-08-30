@@ -5,14 +5,14 @@
       title="新建"
       width="500"
       align-center
-      destroy-on-close="true"
     >
       <dtm-form v-bind="modelConfig" v-model="formData"></dtm-form>
+      <slot></slot>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="centerDialogVisible = false">Cancel</el-button>
-          <el-button type="primary" @click="centerDialogVisible = false">
-            Confirm
+          <el-button @click="centerDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleConfirmClick">
+            确定
           </el-button>
         </div>
       </template>
@@ -24,6 +24,7 @@
 import { defineComponent, ref, watch } from "vue";
 
 import DtmForm from "@/base-ui/form";
+import { useStore } from "vuex";
 
 export default defineComponent({
   props: {
@@ -31,7 +32,14 @@ export default defineComponent({
       type: Object,
       reuqired: true,
     },
-
+    pageName: {
+      type: String,
+      reuqired: true,
+    },
+    otherInfo: {
+      type: Object,
+      default: () => ({}),
+    },
     defaultInfo: {
       type: Object,
       default: () => ({}),
@@ -54,9 +62,36 @@ export default defineComponent({
       },
     );
 
+    // 点击确定按钮
+    const store = useStore();
+    const handleConfirmClick = () => {
+      console.log(formData.value);
+      centerDialogVisible.value = false;
+      if (Object.keys(props.defaultInfo).length) {
+        // 编辑
+
+        store.dispatch("system/editPageDataAction", {
+          pageName: props.pageName,
+          editData: { ...formData.value, ...props.otherInfo },
+          id: props.defaultInfo.id,
+        });
+      } else {
+        // 新建
+        console.log("新建");
+        console.log(formData.value);
+        console.log(props.pageName);
+
+        store.dispatch("system/createPageDataAction", {
+          pageName: props.pageName,
+          newData: { ...formData.value, ...props.otherInfo },
+        });
+      }
+    };
+
     return {
       centerDialogVisible,
       formData,
+      handleConfirmClick,
     };
   },
 });

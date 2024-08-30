@@ -39,12 +39,14 @@ export default defineComponent({
         if (valid) {
           console.log("success");
           // 判断是否记住密码
+          localCache.setCache("name", account.name);
+
           if (isKeepPassword) {
             // 本地存储
-            localCache.setCache("name", account.name);
+            // localCache.setCache("name", account.name);
             localCache.setCache("password", account.password);
           } else {
-            localCache.deleteCache("name");
+            // localCache.deleteCache("name");
             localCache.deleteCache("password");
           }
           // 开始登陆验证

@@ -10,7 +10,9 @@
       </span>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item icon="CircleCloseFilled">退出登录</el-dropdown-item>
+          <el-dropdown-item icon="CircleCloseFilled" @click="logout"
+            >退出登录</el-dropdown-item
+          >
           <el-dropdown-item icon="UserFilled">用户信息</el-dropdown-item>
           <el-dropdown-item icon="Tools">系统管理</el-dropdown-item>
         </el-dropdown-menu>
@@ -24,6 +26,8 @@ import { defineComponent, computed } from "vue";
 
 import localCache from "@/utils/cache";
 
+import { useRouter } from "vue-router";
+
 export default defineComponent({
   setup() {
     const squareUrl =
@@ -31,9 +35,29 @@ export default defineComponent({
 
     const name = computed(() => localCache.getCache("name") ?? "未登录");
 
+    const router = useRouter();
+    const logout = () => {
+      localCache.clearCache();
+      router.push("/login");
+    };
+
+    // const backClick = () => {
+    //   // 跳转到登录页面
+    //   const router = useRouter();
+    //   router.push("/login"); //
+
+    //   // 清空本地存储
+    //   localCache.clearCache();
+
+    //   // 重新渲染页面
+    //   window.location.reload();
+    // };
+
     return {
       squareUrl,
       name,
+      // backClick,
+      logout,
     };
   },
 });

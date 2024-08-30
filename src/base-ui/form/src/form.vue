@@ -8,19 +8,27 @@
         <template v-for="item in formItems" :key="item.label">
           <el-col v-bind="colLayout">
             <el-form-item
+              v-if="!item.isHidden"
               :label="item.label"
               :rules="item.rules"
               :style="itemStyle"
             >
-              <template
-                v-if="item.type === 'input' || item.type === 'password'"
-              >
+              <template v-if="item.type === 'input'">
                 <el-input
                   :placeholder="item.placeholder"
                   :model-value="modelValue[`${item.field}`]"
                   @update:modelValue="handleValueChange($event, item.field)"
                 ></el-input
               ></template>
+              <template v-else-if="item.type === 'password'">
+                <el-input
+                  :placeholder="item.placeholder"
+                  :model-value="modelValue[`${item.field}`]"
+                  @update:modelValue="handleValueChange($event, item.field)"
+                  show-password
+                ></el-input
+              ></template>
+
               <template v-else-if="item.type === 'select'">
                 <el-select
                   :model-value="modelValue[`${item.field}`]"
@@ -29,7 +37,7 @@
                   <el-option
                     v-for="option in item.options"
                     :key="option.value"
-                    :value="option.label"
+                    :value="option.value"
                     >{{ option.label }}</el-option
                   >
                 </el-select>

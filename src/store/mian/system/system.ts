@@ -3,7 +3,12 @@ import { Module } from "vuex";
 import { ISystemState } from "./types";
 import { IRootState } from "@/store/types";
 // import loginModule from "@/store/login/login";
-import { getPageListData, deletePageData } from "@/service/main/system/system";
+import {
+  getPageListData,
+  deletePageData,
+  createPageData,
+  editPageData,
+} from "@/service/main/system/system";
 
 const ststemModule: Module<ISystemState, IRootState> = {
   namespaced: true,
@@ -21,6 +26,9 @@ const ststemModule: Module<ISystemState, IRootState> = {
 
       menuList: [],
       menuCount: 0,
+
+      departmentList: [],
+      departmentCount: 0,
     };
   },
   getters: {
@@ -71,6 +79,15 @@ const ststemModule: Module<ISystemState, IRootState> = {
     changeMenuCount(state, menuCount: number) {
       state.menuCount = menuCount;
     },
+
+    // departmentList
+    changeDepartmentList(state, departmentList: any[]) {
+      state.departmentList = departmentList;
+    },
+    // departmentCount
+    changeDepartmentCount(state, departmentCount: number) {
+      state.departmentCount = departmentCount;
+    },
   },
 
   actions: {
@@ -112,6 +129,38 @@ const ststemModule: Module<ISystemState, IRootState> = {
       dispatch("getPageListAction", {
         pageUrl: pageName,
         queryInfo: query,
+      });
+    },
+
+    // 新建
+    async createPageDataAction({ dispatch }, payload: any) {
+      const { pageName, newData } = payload;
+      const pageUrl = `/${pageName}`;
+      await createPageData(pageUrl, newData);
+      // 2、新建的后续处理
+      dispatch("getPageListAction", {
+        pageUrl: pageName,
+        queryInfo: {
+          offset: 0,
+          size: 10,
+        },
+      });
+    },
+
+    // 编辑
+    async editPageDataAction({ dispatch }, payload: any) {
+      const { pageName, editData, id } = payload;
+      const pageUrl = `/${pageName}/${id}`;
+
+      await editPageData(pageUrl, editData);
+
+      // 2、编辑的后续处理
+      dispatch("getPageListAction", {
+        pageUrl: pageName,
+        queryInfo: {
+          offset: 0,
+          size: 10,
+        },
       });
     },
   },

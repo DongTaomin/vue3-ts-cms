@@ -8,6 +8,7 @@ export interface IFormItem {
   placeholder?: string;
   options?: any[];
   otherOptions?: any;
+  isHidden?: boolean;
 }
 
 // 属性合并
